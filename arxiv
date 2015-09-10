@@ -1,0 +1,23 @@
+#!/bin/bash
+# Usage: arxiv [arxiv reference number]
+# Pulls a pdf file and bibtex field from the internet. Also
+# loads the bibtex field into the system clipboard.
+# If no reference number is provided, it uses the contents of the 
+# clipboard.
+if [ "$#" -eq 0 ]; then
+    ref=`pbpaste`
+fi
+if [ "$#" -gt 1 ]; then
+    echo "Too many arguments."
+    exit 1
+fi
+if [[ $# -eq 1 ]]; then
+    ref=$1
+fi
+
+cd ~/Downloads
+curl -O http://arxiv.org/pdf/$ref.pdf
+arxiv2bib.py $ref > $ref.bib
+cat $ref.bib | pbcopy
+open $ref.pdf
+cd -
