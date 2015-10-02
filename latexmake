@@ -1,0 +1,9 @@
+#!/bin/bash
+file=$@
+syncfile=${file%%.tex}.synctex.gz
+
+latexrun --latex-args="-synctex=1" $file
+if [ -f latex.out/$syncfile ];
+then
+   cp latex.out/$syncfile $syncfile
+fi
