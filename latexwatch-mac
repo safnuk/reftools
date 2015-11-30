@@ -1,0 +1,6 @@
+#!/bin/bash
+fswatch *.tex |\
+		(while read x; do echo $x | xargs \
+		rubber --warn all -m pdftex --inplace --maxerr -1 --short &&\
+		killall -HUP mupdf ;\
+		done)

@@ -1,0 +1,8 @@
+#1/bin/bash
+inotifywait -qme close_write  --format "%f" ./ |\
+                (while read x; do [[ ${x} == *.tex ]] && \
+                 latexrun $x &&\
+                 (killall -HUP mupdf ; cp latex.out/${x%.*}.synctex.gz ./; )\
+                 cd latex.out; rubber-info ${x%.*}.log > errors.log; cd ..;\ 
+                 done)
+
