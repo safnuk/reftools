@@ -1,8 +1,21 @@
 #1/bin/bash
-inotifywait -qme close_write  --format "%f" ./ |\
-                (while read x; do [[ ${x} == *.tex ]] && \
-                 latexrun $x &&\
-                 (killall -HUP mupdf ; cp latex.out/${x%.*}.synctex.gz ./; )\
-                 cd latex.out; rubber-info ${x%.*}.log > errors.log; cd ..;\ 
-                 done)
-
+inotifywait -qme close_write  --format "%f" ./ | {
+    while read x; do
+        if [[ ${x} == *.tex ]]
+        then
+            errorfile="${x%%.tex}.errors"
+            syncfile="${x%%.tex}.synctex.gz"
+            mkdir -p latex.out
+            echo "Building $x"
+            if latexrun --latex-args="-synctex=1" $x > latex.out/$errorfile
+            then   # no error code, so compiling completed
+                if [ -f latex.out/$syncfile ]
+                then
+                    cp latex.out/$syncfile $syncfile
+                fi
+                killall -HUP mupdf
+            fi
+            cat latex.out/$errorfile
+        fi
+    done
+}
