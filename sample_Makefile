@@ -1,7 +1,0 @@
-DEPENDS=intro.tex somesection.tex somethingelse.tex appendix.tex references.bib
-
-.PHONY: all
-
-all: mypaper.pdf
-
-include /usr/local/etc/reftools/latex.mk
